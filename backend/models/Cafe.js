@@ -2,8 +2,9 @@ const mongoose = require('mongoose');
 
 const cafeSchema = new mongoose.Schema(
   {
-    googlePlaceId: { type: String, unique: true, sparse: true, index: true },
+    fsq_id: { type: String, unique: true, sparse: true, index: true },
     name: { type: String, required: true, trim: true },
+    photo: { type: String },
     address: { type: String, trim: true },
     location: {
       type: {

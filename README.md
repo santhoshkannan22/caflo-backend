@@ -6,7 +6,7 @@ Production-ready Node.js/Express/MongoDB backend for **Caflo**, a coffee shop di
 
 - JWT authentication (register/login)
 - User preferences and saved cafes
-- Nearby cafe discovery via Google Places API
+- Nearby cafe discovery via Foursquare Places API
 - WorkScore calculation (0-10)
 - Cafe details and review system
 - Recommendation engine (work score + distance + user preference)
@@ -43,7 +43,7 @@ backend/
    ```
    Fill in `.env` values:
    - `MONGO_URI`
-   - `GOOGLE_MAPS_API_KEY`
+   - `FOURSQUARE_API_KEY`
    - `JWT_SECRET`
 
 3. **Run the server**
@@ -88,4 +88,4 @@ Base URL: `/api`
 
 - `noiseLevelScore` is computed as `10 - noiseLevel` because less noise is better for remote work.
 - Review submissions auto-refresh cafe metrics and WorkScore.
-- Recommendation requests refresh nearby Google cafes before ranking.
+- Recommendation requests refresh nearby cafes from Foursquare before ranking.
