@@ -12,7 +12,7 @@ const mapFoursquareToCafePayload = (item) => {
   return {
     fsq_id: item.id || item.fsq_id, // Store Foursquare ID natively
     name: item.name || 'Unknown Cafe',
-    photo: item.photoUrl || (item.photos && item.photos.length > 0 ? `${item.photos[0].prefix}original${item.photos[0].suffix}` : "https://via.placeholder.com/400x300?text=Cafe"),
+    photo: item.photoUrl || (item.photos && item.photos.length > 0 ? `${item.photos[0].prefix}original${item.photos[0].suffix}` : null),
     address: item.location?.address || item.location?.formatted_address || '',
     location: {
       type: 'Point',
