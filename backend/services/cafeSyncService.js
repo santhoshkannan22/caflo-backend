@@ -8,22 +8,25 @@ const DEFAULT_METRICS = {
   powerOutlets: 5
 };
 
-const mapGooglePlaceToCafePayload = (place) => ({
-  googlePlaceId: place.place_id,
-  name: place.name,
-  address: place.vicinity,
-  location: {
-    type: 'Point',
-    coordinates: [place.geometry.location.lng, place.geometry.location.lat]
-  },
-  rating: place.rating || 0
-});
+const mapFoursquareToCafePayload = (item) => {
+  return {
+    fsq_id: item.id || item.fsq_id, // Store Foursquare ID natively
+    name: item.name || 'Unknown Cafe',
+    photo: item.photoUrl || (item.photos && item.photos.length > 0 ? `${item.photos[0].prefix}original${item.photos[0].suffix}` : "https://via.placeholder.com/400x300?text=Cafe"),
+    address: item.location?.address || item.location?.formatted_address || '',
+    location: {
+      type: 'Point',
+      coordinates: [item.geocodes?.main?.longitude || 0, item.geocodes?.main?.latitude || 0]
+    },
+    rating: 8.0 // v3 requires separate fields fetching or parameters
+  };
+};
 
-const upsertCafeFromGoogle = async (place) => {
-  const payload = mapGooglePlaceToCafePayload(place);
+const upsertCafeFromFoursquare = async (item) => {
+  const payload = mapFoursquareToCafePayload(item);
 
   const cafe = await Cafe.findOneAndUpdate(
-    { googlePlaceId: place.place_id },
+    { fsq_id: payload.fsq_id },
     {
       $set: payload,
       $setOnInsert: {
@@ -37,9 +40,9 @@ const upsertCafeFromGoogle = async (place) => {
   return cafe;
 };
 
-const syncNearbyCafes = async (places) => Promise.all(places.map(upsertCafeFromGoogle));
+const syncNearbyCafes = async (places) => Promise.all(places.map(upsertCafeFromFoursquare));
 
 module.exports = {
   syncNearbyCafes,
-  upsertCafeFromGoogle
+  upsertCafeFromFoursquare
 };
