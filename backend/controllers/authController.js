@@ -5,7 +5,7 @@ const generateToken = require('../utils/generateToken');
 
 const registerUser = async (req, res, next) => {
   try {
-    const { name, email, password, preferences } = req.body;
+    const { name, email, password, preferences, profileImage } = req.body;
 
     const existingUser = await User.findOne({ email });
     if (existingUser) {
@@ -19,6 +19,7 @@ const registerUser = async (req, res, next) => {
       name,
       email,
       password: hashedPassword,
+      profileImage,
       preferences
     });
 
@@ -28,6 +29,7 @@ const registerUser = async (req, res, next) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        profileImage: user.profileImage,
         preferences: user.preferences,
         savedCafes: user.savedCafes,
         createdAt: user.createdAt
@@ -62,6 +64,7 @@ const loginUser = async (req, res, next) => {
         id: user._id,
         name: user.name,
         email: user.email,
+        profileImage: user.profileImage,
         preferences: user.preferences,
         savedCafes: user.savedCafes,
         createdAt: user.createdAt
@@ -72,7 +75,36 @@ const loginUser = async (req, res, next) => {
   }
 };
 
+const updateProfile = async (req, res, next) => {
+  try {
+    const user = await User.findById(req.user._id);
+    if (!user) {
+      const error = new Error('User not found');
+      error.statusCode = 404;
+      throw error;
+    }
+
+    if (req.body.name) user.name = req.body.name;
+    if (req.body.profileImage !== undefined) user.profileImage = req.body.profileImage;
+
+    const updatedUser = await user.save();
+
+    return res.status(200).json({
+      id: updatedUser._id,
+      name: updatedUser.name,
+      email: updatedUser.email,
+      profileImage: updatedUser.profileImage,
+      preferences: updatedUser.preferences,
+      savedCafes: updatedUser.savedCafes,
+      createdAt: updatedUser.createdAt
+    });
+  } catch (error) {
+    return next(error);
+  }
+};
+
 module.exports = {
   registerUser,
-  loginUser
+  loginUser,
+  updateProfile
 };
