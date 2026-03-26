@@ -1,5 +1,5 @@
 const Cafe = require('../models/Cafe');
-const { fetchNearbyCafes } = require('../services/googlePlacesService');
+const { fetchNearbyCafes } = require('../services/foursquarePlacesService');
 const { syncNearbyCafes } = require('../services/cafeSyncService');
 const { sortRecommendations } = require('../services/recommendationService');
 
@@ -7,7 +7,7 @@ const getRecommendations = async (req, res, next) => {
   try {
     const { latitude, longitude, radius = 3000, preference } = req.query;
 
-    // Refresh nearby cafes from Google first so recommendations are current.
+    // Refresh nearby cafes from Foursquare first so recommendations are current.
     const places = await fetchNearbyCafes({ latitude, longitude, radius });
     await syncNearbyCafes(places);
 
